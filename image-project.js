@@ -21,6 +21,7 @@ export class ImageProject extends DDDSuper(I18NMixin(LitElement)) {
   constructor() {
     super();
     this.title = "";
+    this.imageSrc = ""; //***************************************************************** */
     this.t = this.t || {};
     this.t = {
       ...this.t,
@@ -40,6 +41,7 @@ export class ImageProject extends DDDSuper(I18NMixin(LitElement)) {
     return {
       ...super.properties,
       title: { type: String },
+      imageSrc: { type: String } //***************************************************************** */
     };
   }
 
@@ -52,6 +54,8 @@ export class ImageProject extends DDDSuper(I18NMixin(LitElement)) {
         color: var(--ddd-theme-primary);
         background-color: var(--ddd-theme-accent);
         font-family: var(--ddd-font-navigation);
+        width: 500px;
+        height: 500px;
       }
       .wrapper {
         margin: var(--ddd-spacing-2);
@@ -59,6 +63,10 @@ export class ImageProject extends DDDSuper(I18NMixin(LitElement)) {
       }
       h3 span {
         font-size: var(--image-project-label-font-size, var(--ddd-font-size-s));
+      }
+      #image {
+        width: 400px;
+        height: 300px;
       }
     `];
   }
@@ -68,9 +76,27 @@ export class ImageProject extends DDDSuper(I18NMixin(LitElement)) {
     return html`
 <div class="wrapper">
   <h3><span>${this.t.title}:</span> ${this.title}</h3>
-  <slot></slot>
+  <!-- //***************************************************************** */ -->
+<img id="image" src=${this.imageSrc} alt="Random Fox" /> 
+  <!-- //***************************************************************** */ -->
+<slot></slot>
 </div>`;
   }
+
+
+
+//***************************************************************** */
+  firstUpdated() {
+    fetch("https://randomfox.ca/floof/")
+      .then((resp) => (resp.ok ? resp.json() : null))
+      .then((data) => {
+        if (data && data.image) {
+          this.imageSrc = data.image; 
+        }
+      });
+  }
+
+
 
   /**
    * haxProperties integration via file reference
