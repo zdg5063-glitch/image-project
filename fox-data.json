@@ -1,12 +1,12 @@
 {
-  "data": [
-    {
-      "source": "https://randomfox.ca/images/23.jpg",
-      "title": "Fox Image"
-    },
-    {
-      "source": "https://randomfox.ca/?i=23",
-      "title": "Fox"
-    }
-  ]
+ "data": [
+   {
+     "source": "https://randomfox.ca/images/23.jpg",
+     "title": "Fox Image"
+   },
+   {
+     "source": "https://randomfox.ca/?i=23",
+     "title": "Fox"
+   }
+ ]
 }
