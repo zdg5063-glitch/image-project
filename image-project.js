@@ -151,6 +151,7 @@ export class ImageProject extends DDDSuper(I18NMixin(LitElement)) {
         .imageIndex-container {
           font-size: 24px;
           font-weight: 500;
+          color: white;
         }
 
         .button-row {
