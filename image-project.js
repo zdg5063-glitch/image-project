@@ -249,18 +249,29 @@ export class ImageProject extends DDDSuper(I18NMixin(LitElement)) {
     }
   }
 
-  async _loadAllArtworks() {
-    try {
-      const resp = await fetch("/api/basquiat", { cache: "no-store" });
-      const data = await resp.json();
-      this.artworks = data.artworks || [];
-      this.totalArtworks = this.artworks.length;
-    } catch (err) {
-      console.error("Error loading artworks:", err);
-      this.artworks = [];
-      this.totalArtworks = 0;
-    }
+ async _loadAllArtworks() {
+  try {
+    const hostname = window.location.hostname;
+    const isLocal = hostname === "localhost" || hostname === "127.0.0.1";
+
+    // 🧩 Use /data/ locally, /api/ on Vercel
+    const url = isLocal
+      ? "/data/basquiat.json"
+      : "/api/basquiat";
+
+    const resp = await fetch(url, { cache: "no-store" });
+    if (!resp.ok) throw new Error(`HTTP error! status: ${resp.status}`);
+
+    const data = await resp.json();
+    this.artworks = data.artworks || [];
+    this.totalArtworks = this.artworks.length;
+  } catch (err) {
+    console.error("Error loading artworks:", err);
+    this.artworks = [];
+    this.totalArtworks = 0;
   }
+}
+
 
   showNextArtwork() {
     if (!this.artworks?.length) return;
