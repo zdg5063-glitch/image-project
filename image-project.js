@@ -251,7 +251,7 @@ export class ImageProject extends DDDSuper(I18NMixin(LitElement)) {
 
   async _loadAllArtworks() {
     try {
-      const resp = await fetch("/data/basquiat.json", { cache: "no-store" });
+      const resp = await fetch("/api/basquiat", { cache: "no-store" });
       const data = await resp.json();
       this.artworks = data.artworks || [];
       this.totalArtworks = this.artworks.length;
