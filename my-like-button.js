@@ -5,6 +5,7 @@ export class LikeButton extends DDDSuper(LitElement) {
   static get properties() {
     return {
       liked: { type: Boolean, reflect: true },
+      likeIndex: { type: String }
     };
   }
 
@@ -34,18 +35,31 @@ export class LikeButton extends DDDSuper(LitElement) {
         :host([liked]) button {
           color: red;
         }
+
+        span {
+          margin-left: 8px;
+          font-size: 18px;
+        }
       `
     ];
   }
 
   handleClick() {
     this.liked = !this.liked;
-    this.dispatchEvent(new CustomEvent("liked", { detail: { liked: this.liked } }));
+    this.dispatchEvent(
+      new CustomEvent("liked", { 
+        detail: { liked: this.liked, count: this.likeCount },
+      bubbles: true,
+      composed: true 
+    })
+  );
   }
 
   render() {
     return html`
-      <button @click=${this.handleClick}>👍</button>
+      <button @click=${this.handleClick}>
+        ${this.liked ? '❤️' : '🤍'} <span>${this.likeCount}</span>
+      </button>
     `;
   }
 }

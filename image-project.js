@@ -16,7 +16,6 @@ import "./my-share-button.js";
  * @element image-project
  */
 export class ImageProject extends DDDSuper(I18NMixin(LitElement)) {
-
   static get tag() {
     return "image-project";
   }
@@ -30,6 +29,9 @@ export class ImageProject extends DDDSuper(I18NMixin(LitElement)) {
     this.description = "";
     this.imageIndex = 0;
 
+    this.artworks = [];
+    this.totalArtworks = 0;
+    this.showGrid = true; // ✅ new
 
     this.registerLocalization({
       context: this,
@@ -39,7 +41,6 @@ export class ImageProject extends DDDSuper(I18NMixin(LitElement)) {
     });
   }
 
-
   static get properties() {
     return {
       ...super.properties,
@@ -48,10 +49,10 @@ export class ImageProject extends DDDSuper(I18NMixin(LitElement)) {
       year: { type: String },
       imageSrc: { type: String },
       description: { type: String },
-      imageIndex: { type: String }
+      imageIndex: { type: String },
+      showGrid: { type: Boolean }, // ✅ new
     };
   }
-
 
   static get styles() {
     return [
@@ -63,8 +64,8 @@ export class ImageProject extends DDDSuper(I18NMixin(LitElement)) {
           height: auto;
           min-height: 100vh;
           box-sizing: border-box;
-          background: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0.8));
-          color: var(--ddd-theme-default-coalyGray);
+          background-color: black;
+          color: white;
         }
 
         @media (prefers-color-scheme: dark) {
@@ -88,8 +89,10 @@ export class ImageProject extends DDDSuper(I18NMixin(LitElement)) {
           flex-wrap: wrap;
           gap: 32px;
           width: 100%;
-          padding: 100px;
+          padding: 72px;
           box-sizing: border-box;
+          background-color: black;
+          color: white;
         }
 
         .buttons {
@@ -123,12 +126,15 @@ export class ImageProject extends DDDSuper(I18NMixin(LitElement)) {
           max-width: 100%;
         }
 
-        #title {
-          padding-top: 0px;
-          position: relative;
-          font-size: 48px;
-          font-weight: 900;
-        }
+       #title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;    /* bold for main title */
+  font-style: italic;  /* slanted like frames */
+  color: white;
+  font-size: 48px;
+  padding-top: 0px;
+  position: relative;
+}
 
         #artist-year {
           font-size: 24px;
@@ -161,13 +167,28 @@ export class ImageProject extends DDDSuper(I18NMixin(LitElement)) {
         }
 
         .refresh-btn {
-          padding: 8px 16px;
-          font-size: 16px;
+        padding: 8px 16px;
+        font-size: 16px;
+        border: none;
+        border-radius: 6px;
+        background-color: black; /* make background black */
+        color: white; /* make text white */
+        cursor: pointer;
+        border: 1px solid white; /* optional: add white border for visibility */
+      }
+
+        .arrow-btn {
+          font-size: 50px;
           border: none;
-          border-radius: 6px;
-          background-color: var(--ddd-theme-default-inventOrange);
-          color: var(--ddd-theme-default-coalyGray);
+          border-radius: 12px;
+          background-color: transparent;
+          color: white;
           cursor: pointer;
+          transition: transform 0.2s ease;
+        }
+
+        .arrow-btn:hover {
+          transform: scale(1.1);
         }
 
         @media (max-width: 900px) {
@@ -196,47 +217,146 @@ export class ImageProject extends DDDSuper(I18NMixin(LitElement)) {
             text-align: center;
           }
         }
+
+        /* =================Gallery grid ================== */
+        .grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, 500px);
+          gap: 16px;
+          width: 100%;
+          box-sizing: content-box;
+          padding: 4px;
+          background-color: black;
+        }
+
+        .frame {
+          background-color: black;
+          padding: 24px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          color: white;
+        }
+
+        .frame img {
+          width: 475px;
+          height: 375px;
+          object-fit: cover;
+          display: block;
+        }
+
+                /* Import Playfair Display from Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&display=swap');
+
+        .frame h4 {
+          font-family: 'Playfair Display', serif;
+          color: white;
+          margin: 12px 6px;
+          font-size: 48px;
+          font-weight: 100;
+          font-style: italic;         
+        }
+
+        .frame button {
+          margin-top: 8px;
+          padding: 8px 16px;
+          font-size: 16px;  
+          border-radius: 6px;
+          border: 1px solid white; 
+          cursor: pointer;
+          background-color: black; 
+          color: white;            
+        }
+        .archive-heading {
+  font-family: 'Playfair Display', serif;
+  background-color: black;
+  color: white;
+  text-align: center;
+  font-size: 72px;
+  margin: 0; /* remove white space */
+  padding-top: 72px; 
+}
+
+
+
       `,
     ];
   }
 
   render() {
-    return html`
-      <div class="content-row">
-        <div class="image-container">
-          <img id="image" src=${this.imageSrc} alt=${this.title} />
-        </div>
+  const currentIndex = Number(this.imageIndex) || 0;
+  const currentLiked = this.artworks?.[currentIndex]?.liked || false;
 
-        <div class="text-section">
-          <div class="button-row">
-            <button class="refresh-btn" @click=${this.showNextArtwork}>
-              New Basquiat
-            </button>
-            <my-like-button></my-like-button>
-            <my-dislike-button></my-dislike-button>
-            <my-share-button></my-share-button>
-          </div>
+  // Site-wide heading, always displayed
+  const heading = html`<h1 class="archive-heading">Jean-Michel Basquiat Archive</h1>`;
 
-          <h3 id="title">${this.title}</h3>
-          <div id="artist-year">
-            ${this.artist ? `${this.artist}` : ""}
-            ${this.year ? `(${this.year})` : ""}
-          </div>
-
-          <div class="description-container">
-            ${this.description ? this.description : ""}
-          </div>
-        </div>
-        <div class="imageIndex-container">
-          ${this.imageIndex ? this.imageIndex : ""}
-        </div>
+// GALLERY GRID VIEW ====== LAZY LOAD
+if (this.showGrid) {
+  return html`
+    ${heading}
+    <div class="content-row">
+      <div class="grid">
+        ${this.artworks && this.artworks.length
+          ? this.artworks.map(
+              (art, i) => html`
+                <div class="frame">
+                  <img 
+                    src="${art.image || ""}" 
+                    alt="${art.title || "Untitled"}" 
+                    loading="lazy" 
+                  />
+                  <h4>${art.title || "Untitled"}</h4>
+                  <button @click=${() => this._openDetails(i)}>view details</button>
+                </div>
+              `
+            )
+          : html`<div>Loading artworks…</div>`}
       </div>
-    `;
-  }
+    </div>
+  `;
+}
 
-  // ============================================================
-  // MAIN LOGIC
-  // ============================================================
+
+// DETAIL VIEW (original layout)
+return html`
+  ${heading}
+  <div class="content-row">
+    <div class="image-container">
+      <img id="image" src=${this.imageSrc} alt=${this.title} />
+    </div>
+
+    <div class="text-section">
+      <div class="button-row">
+        <my-like-button
+          likeIndex="${this.imageIndex}"
+          ?liked=${currentLiked}
+          @liked=${this._handleLike}
+        ></my-like-button>
+
+        <button class="refresh-btn" @click=${this._backToGrid}>
+          back to gallery
+        </button>
+      </div>
+
+      <h3 id="title">${this.title}</h3>
+      <div id="artist-year">
+        ${this.artist ? `${this.artist}` : ""} ${this.year ? `(${this.year})` : ""}
+      </div>
+
+      <div class="description-container">
+        ${this.description ? this.description : ""}
+      </div>
+    </div>
+
+    <div class="imageIndex-container">
+      <button class="arrow-btn" @click=${this.showPreviousArtwork}>←</button>
+      <span>${this.imageIndex ? this.imageIndex : ""}</span>
+      <button class="arrow-btn" @click=${this.showNextArtwork}>→</button>
+    </div>
+  </div>
+`;
+  }
 
   async connectedCallback() {
     super.connectedCallback();
@@ -245,50 +365,46 @@ export class ImageProject extends DDDSuper(I18NMixin(LitElement)) {
     if (!Number.isNaN(savedIndex)) {
       this.loadArtworkByIndex(savedIndex);
     } else {
-      this.showNextArtwork();
+      this.showGrid = true;
     }
   }
 
- async _loadAllArtworks() {
-  try {
-    const hostname = window.location.hostname;
-    const isLocal = hostname === "localhost" || hostname === "127.0.0.1";
+  async _loadAllArtworks() {
+    try {
+      const hostname = window.location.hostname;
+      const isLocal = hostname === "localhost" || hostname === "127.0.0.1";
+      const url = isLocal ? "/data/basquiat.json" : "/api/basquiat";
+      const resp = await fetch(url, { cache: "no-store" });
+      if (!resp.ok) throw new Error(`HTTP error! status: ${resp.status}`);
 
-    // 🧩 Use /data/ locally, /api/ on Vercel
-    const url = isLocal
-      ? "/data/basquiat.json"
-      : "/api/basquiat";
-
-    const resp = await fetch(url, { cache: "no-store" });
-    if (!resp.ok) throw new Error(`HTTP error! status: ${resp.status}`);
-
-    const data = await resp.json();
-    this.artworks = data.artworks || [];
-    this.totalArtworks = this.artworks.length;
-  } catch (err) {
-    console.error("Error loading artworks:", err);
-    this.artworks = [];
-    this.totalArtworks = 0;
+      const data = await resp.json();
+      this.artworks = data.artworks || [];
+      this.totalArtworks = this.artworks.length;
+    } catch (err) {
+      console.error("Error loading artworks:", err);
+      this.artworks = [];
+      this.totalArtworks = 0;
+    }
   }
-}
-
 
   showNextArtwork() {
     if (!this.artworks?.length) return;
-
     let index = Number(localStorage.getItem("lastArtworkIndex"));
     if (Number.isNaN(index)) index = -1;
-
-    // Wrap around cleanly after the last image
     index = (index + 1) % this.totalArtworks;
+    this.loadArtworkByIndex(index);
+  }
 
+  showPreviousArtwork() {
+    if (!this.artworks?.length) return;
+    let index = Number(localStorage.getItem("lastArtworkIndex"));
+    if (Number.isNaN(index)) index = 0;
+    index = (index - 1 + this.totalArtworks) % this.totalArtworks;
     this.loadArtworkByIndex(index);
   }
 
   loadArtworkByIndex(index) {
     if (!this.artworks?.length) return;
-
-    // Clamp index to valid range
     if (index < 0) index = 0;
     if (index >= this.totalArtworks) index = 0;
 
@@ -298,12 +414,10 @@ export class ImageProject extends DDDSuper(I18NMixin(LitElement)) {
     this.displayArtwork(art);
     this.imageIndex = index;
 
-    // Save to localStorage for persistence
     localStorage.setItem("lastArtworkIndex", String(index));
     localStorage.setItem("lastArtwork", JSON.stringify(art));
 
     this._updateUrlWithIndex(index);
-    console.log(`Displayed artwork #${index + 1}: ${art.title}`);
   }
 
   displayArtwork(art) {
@@ -312,7 +426,6 @@ export class ImageProject extends DDDSuper(I18NMixin(LitElement)) {
     this.title = art.title || "Untitled";
     this.year = art.year || "";
     this.description = art.description || "";
-    this.imageIndex = (this.imageIndex ?? 0) + 1;
   }
 
   _updateUrlWithIndex(index) {
@@ -323,6 +436,30 @@ export class ImageProject extends DDDSuper(I18NMixin(LitElement)) {
       history.replaceState(null, "", newUrl);
     } catch (err) {
       console.warn("Could not update URL with art index:", err);
+    }
+  }
+
+  // ✅ Open the detail page for clicked frame
+  _openDetails(index) {
+    const idx = Number(index);
+    if (Number.isNaN(idx) || !this.artworks || !this.artworks[idx]) return;
+    this.showGrid = false;
+    this.loadArtworkByIndex(idx);
+    this.requestUpdate();
+  }
+
+  // ✅ Return to grid
+  _backToGrid() {
+    this.showGrid = true;
+    this.requestUpdate();
+  }
+
+  _handleLike(e) {
+    const { liked, index } = e.detail;
+    const idx = Number(index);
+    if (Number.isNaN(idx)) return;
+    if (this.artworks && this.artworks[idx]) {
+      this.artworks[idx].liked = liked;
     }
   }
 
