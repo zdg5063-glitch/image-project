@@ -50,7 +50,7 @@ export class ImageProject extends DDDSuper(I18NMixin(LitElement)) {
       imageSrc: { type: String },
       description: { type: String },
       imageIndex: { type: String },
-      showGrid: { type: Boolean }, // ✅ new
+      showGrid: { type: Boolean }, 
     };
   }
 
@@ -128,18 +128,18 @@ export class ImageProject extends DDDSuper(I18NMixin(LitElement)) {
 
        #title {
   font-family: 'Playfair Display', serif;
-  font-weight: 700;    /* bold for main title */
+  font-weight: 900;    /* bold for main title */
   font-style: italic;  /* slanted like frames */
   color: white;
-  font-size: 48px;
+  font-size: 64px;
   padding-top: 0px;
   position: relative;
 }
 
         #artist-year {
-          font-size: 24px;
+          font-size: 32px;
           margin-bottom: 12px;
-          font-weight: 200;
+          font-weight: 400;
         }
 
         .description-container {
@@ -153,6 +153,22 @@ export class ImageProject extends DDDSuper(I18NMixin(LitElement)) {
           overflow-y: auto;
           text-align: left;
         }
+
+        .price-container {
+  background-color: black; 
+  border: 1px solid white;                     
+  padding: 12px;
+  border-radius: 4px;
+  margin-top: 16px;
+  font-size: 16px;      /* smaller font */
+  line-height: 1.9;
+  color: white;
+  max-width: 500px;     /* optional: limits box width */
+}
+.price-container p {
+  margin: 4px 0;
+}
+
 
         .imageIndex-container {
           font-size: 24px;
@@ -347,11 +363,24 @@ return html`
       <div class="description-container">
         ${this.description ? this.description : ""}
       </div>
+
+      <div class="price-container">
+        <p><strong>Medium:</strong> ${this.medium}</p>
+  <p><strong>Dimensions:</strong> ${this.dimensions}</p>
+  <p><strong>Price:</strong> ${this.price !== "Undisclosed" 
+      ? (this.price.startsWith("$") ? this.price : "$" + this.price) 
+      : "Undisclosed"}</p>
+</div>
+
+
+
+
+
     </div>
 
     <div class="imageIndex-container">
       <button class="arrow-btn" @click=${this.showPreviousArtwork}>←</button>
-      <span>${this.imageIndex ? this.imageIndex : ""}</span>
+      <span>${currentIndex + 1}</span>
       <button class="arrow-btn" @click=${this.showNextArtwork}>→</button>
     </div>
   </div>
@@ -421,12 +450,16 @@ return html`
   }
 
   displayArtwork(art) {
-    this.imageSrc = art.image || "";
-    this.artist = art.artist || "";
-    this.title = art.title || "Untitled";
-    this.year = art.year || "";
-    this.description = art.description || "";
-  }
+  this.imageSrc = art.image || "";
+  this.artist = art.artist || "";
+  this.title = art.title || "Untitled";
+  this.year = art.year || "";
+  this.description = art.description || "";
+  this.price = art.price || "Undisclosed";
+  this.medium = art.medium || "Undisclosed";
+  this.dimensions = art.dimensions || "Undisclosed";
+}
+
 
   _updateUrlWithIndex(index) {
     try {
