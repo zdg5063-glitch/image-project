@@ -33,6 +33,7 @@ export class MyLikeButton extends LitElement {
     return css`
       button {
         background-color: black;
+        height: 36px;
         color: white;
         border: 1px solid white;
         border-radius: 6px;

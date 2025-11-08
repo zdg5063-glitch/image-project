@@ -383,8 +383,7 @@ static get styles() {
   align-items: center;
 }
 
-/* "BACK TO GALLERY" AND "SHARE" BUTTONS */
-.back-to-gallery,
+/* "SHARE" BUTTON */
 .share-btn {
   padding: 8px 16px;
   font-size: 16px;
@@ -395,7 +394,6 @@ static get styles() {
   cursor: pointer;
 }
 
-.back-to-gallery:hover,
 .share-btn:hover {
   background-color: white;   
   color: black;             
@@ -423,6 +421,33 @@ static get styles() {
   opacity: 1;
 }
 
+/* BACK TO GALLERY */
+  .back-to-gallery {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  font-size: 16px;
+  color: white;             
+  background: transparent;
+  border: 1px solid white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.back-to-gallery:hover {
+  background: white;
+  color: black;
+  transform: scale(1.03);
+}
+
+.icon-grid {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  flex: 0 0 auto;
+  /* SVG uses fill="currentColor" so it automatically follows .back-to-gallery color */
+}
 
 /* ARROW BUTTONS FOR IMAGE INDEX */
 .arrow-btn {
@@ -450,6 +475,7 @@ static get styles() {
 
 /* FRAME FOR EACH GRIDE SECTION */
 .frame {
+  height: 800px;
   background-color: black;
   padding: 24px;
   text-align: center;
@@ -459,7 +485,7 @@ static get styles() {
 /* IMAGE FRAME WITHIN THE FRAME */
 .frame img {
   width: 475px;
-  height: 375px;
+  height: 500px;
   object-fit: cover;
 }
 
@@ -552,6 +578,49 @@ static get styles() {
     text-align: center;
   }
 }
+  .imageIndex-container {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* space between arrows and number */
+  font-size: 24px;
+  font-weight: 100;
+  color: white;
+}
+
+.arrow-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: transform 0.2s ease, color 0.2s ease;
+  color: white;
+}
+
+.arrow-btn:hover {
+  transform: scale(1.2);
+  color: #ffcc00; /* optional: accent color on hover */
+}
+
+.arrow-btn svg {
+  display: block;
+  width: 28px;
+  height: 28px;
+}
+.bottom-crown {
+  display: block;       
+  margin: 0 auto;      
+  height: 250px;       
+  width: 250px;
+  padding-top: 333px;
+  padding-bottom: 72px
+}
+.crown-wrapper {
+  display: flex;
+  justify-content: center; 
+}
       `,
     ];
   }
@@ -624,6 +693,12 @@ static get styles() {
               : html`<div>Loading artworks…</div>`}
           </div>
         </div>
+          <!-- BOTTOM IMAGE -->
+    <img
+      src="https://atticcapital.com/wp-content/uploads/2022/02/basquiat-crown.png"
+      alt="Basquiat Crown"
+      class="bottom-crown"
+    />
       `;}
 
 
@@ -638,29 +713,60 @@ static get styles() {
         <div class="text-section">
           <div class="button-row">
 
-            <!-- LIKE, BACK TO GALLERY, and SHARE BUTTONS -->
+           <!-- BACK TO GALLERY -->
+            <button class="back-to-gallery" @click=${this._backToGrid} aria-label="Back to gallery">
+  <svg class="icon-grid" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+    <!-- 3x3 grid of squares -->
+    <rect x="1" y="1" width="6" height="6" rx="1" fill="currentColor"></rect>
+    <rect x="9" y="1" width="6" height="6" rx="1" fill="currentColor"></rect>
+    <rect x="17" y="1" width="6" height="6" rx="1" fill="currentColor"></rect>
+
+    <rect x="1" y="9" width="6" height="6" rx="1" fill="currentColor"></rect>
+    <rect x="9" y="9" width="6" height="6" rx="1" fill="currentColor"></rect>
+    <rect x="17" y="9" width="6" height="6" rx="1" fill="currentColor"></rect>
+
+    <rect x="1" y="17" width="6" height="6" rx="1" fill="currentColor"></rect>
+    <rect x="9" y="17" width="6" height="6" rx="1" fill="currentColor"></rect>
+    <rect x="17" y="17" width="6" height="6" rx="1" fill="currentColor"></rect>
+  </svg>
+  <span>Back to Gallery</span>
+</button>
+
+                  
+            <!-- SHARE -->
+            <button class="share-btn" @click=${this._copyLink}>
+            Share
+            <span id="copy-tooltip">Link copied!</span>
+          </button>
+
+           <!-- LIKE, BACK TO GALLERY, and SHARE BUTTONS -->
             <my-like-button
               likeIndex="${this.imageIndex}"
               ?liked=${currentLiked}
               @liked=${this._handleLike}
             ></my-like-button>
 
-            <!-- BACK TO GALLERY -->
-            <button class="back-to-gallery" @click=${this._backToGrid}>
-              back to gallery
-            </button>
 
-            <!-- SHARE -->
-            <button class="share-btn" @click=${this._copyLink}>
-            Share
-            <span id="copy-tooltip">Link copied!</span>
-          </button>
             <div class="imageIndex-container">
-          <button class="arrow-btn" @click=${this.showPreviousArtwork}>←</button>
-          <span>${currentIndex + 1}</span>
-          <button class="arrow-btn" @click=${this.showNextArtwork}>→</button>
-        </div>
-       </div>
+  <!-- Previous Arrow -->
+  <button class="arrow-btn" @click=${this.showPreviousArtwork} aria-label="Previous">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+      <path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/>
+    </svg>
+  </button>
+
+  <!-- Current Index -->
+  <span>${currentIndex + 1}</span>
+
+  <!-- Next Arrow -->
+  <button class="arrow-btn" @click=${this.showNextArtwork} aria-label="Next">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+      <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/>
+    </svg>
+  </button>
+</div>
+</div>
+
 
           
 
@@ -689,8 +795,21 @@ static get styles() {
             </p>
           </div>
         </div>
+        </div>
+        <!-- at the bottom of your detail view -->
+<div class="crown-wrapper">
+  <img
+    src="https://atticcapital.com/wp-content/uploads/2022/02/basquiat-crown.png"
+    alt="Basquiat Crown"
+    class="bottom-crown"
+  />
+</div>
+
     `;
   }
+
+  
+  
 
 
   static get haxProperties() {
