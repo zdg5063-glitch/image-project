@@ -141,6 +141,9 @@ loadArtworkByIndex(index) {
     this.showGrid = false;
     this.loadArtworkByIndex(idx);
     this.requestUpdate();
+
+  // Scroll to the top of the page
+  window.scrollTo(0, 0);
   }
 
 
@@ -148,17 +151,27 @@ loadArtworkByIndex(index) {
   _backToGrid() {
     this.showGrid = true;
     this.requestUpdate();
+    window.scrollTo(0, 0);
   }
 
- _handleLike(e) {
-  const { liked, index } = e.detail;
-  const idx = Number(index);
+//LIKES LOGIC
+_handleLike(e) {
+  const idx = Number(e.detail.index); // the index from the button
+  const liked = e.detail.liked;
+
   if (Number.isNaN(idx)) return;
+
   if (this.artworks && this.artworks[idx]) {
     this.artworks[idx].liked = liked;
-    localStorage.setItem('likedArtworks', JSON.stringify(this.artworks.map(a => a.liked || false)));
+    // Save likes for all artworks in localStorage
+    localStorage.setItem(
+      'likedArtworks',
+      JSON.stringify(this.artworks.map(a => a.liked || false))
+    );
+    this.requestUpdate();
   }
 }
+
 
 
 //====================================================================================
@@ -167,9 +180,11 @@ async connectedCallback() {
   super.connectedCallback();
   await this._loadAllArtworks();
 
-  // Restore likes from localStorage
+  // Step 3: Restore likes from localStorage
   const savedLikes = JSON.parse(localStorage.getItem("likedArtworks") || "[]");
-  this.artworks.forEach((art, i) => (art.liked = savedLikes[i] || false));
+  this.artworks.forEach((art, i) => {
+    art.liked = savedLikes[i] || false;
+  });
 
   // Determine which artwork to show
   const params = new URLSearchParams(window.location.search);
@@ -177,8 +192,8 @@ async connectedCallback() {
   const savedIndex = Number(localStorage.getItem("lastArtworkIndex"));
 
   const indexToShow =
-    !Number.isNaN(artIndexParam) && this.artworks[artIndexParam]
-      ? artIndexParam
+    !Number.isNaN(artIndexParam) && this.artworks[artIndexParam - 1]
+      ? artIndexParam - 1
       : !Number.isNaN(savedIndex)
       ? savedIndex
       : null;
@@ -191,11 +206,12 @@ async connectedCallback() {
   }
 }
 
+
 //UPDATE URL LOGIC (ARTINDEX=X)
   _updateUrlWithIndex(index) {
     try {
       const params = new URLSearchParams(window.location.search);
-      params.set("artIndex", String(index));
+      params.set("artIndex", String(index + 1));
       const newUrl = `${window.location.pathname}?${params.toString()}`;
       history.replaceState(null, "", newUrl);
     } catch (err) {
@@ -621,6 +637,80 @@ static get styles() {
   display: flex;
   justify-content: center; 
 }
+/* Liked artworks heading */
+.liked-heading {
+  font-size: 24px;
+  padding-left: 72px;
+  margin-bottom: 8px;
+}
+
+/* Liked artworks grid */
+.liked-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 8px 12px; /* 8px vertical, 12px horizontal */
+  margin-bottom: 16px;
+  padding-left: 72px;
+  padding-right: 100px;
+}
+
+/* Liked artworks frame */
+.liked-grid .frame {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0;  
+  margin: 12px;   
+  background-color: black;
+  height: auto; /* remove fixed height */
+}
+
+/* Liked artworks images - fixed 100x100px squares */
+.liked-grid .frame img {
+  width: 100px;
+  height: 100px;       /* fixed square */
+  object-fit: cover;   /* crop nicely */
+  display: block;
+  margin-bottom: 4px;
+}
+
+/* Hide titles in liked artworks */
+.liked-grid .frame h4 {
+  display: none;
+}
+
+/* View details button smaller */
+.liked-grid .frame .view-details-button {
+  padding: 4px 8px;
+  font-size: 13px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+  .liked-grid {
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 6px 8px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .liked-grid .frame img {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
       `,
     ];
   }
@@ -629,184 +719,193 @@ static get styles() {
 
 //=================================================================================
 //HTML
-  render() {
+render() {
 
+  const currentIndex = Number(this.imageIndex) || 0;
+  const currentLiked = this.artworks?.[currentIndex]?.liked || false;
 
-    const currentIndex = Number(this.imageIndex) || 0;
-    const currentLiked = this.artworks?.[currentIndex]?.liked || false;
+  const heading = html`<h1 class="archive-heading">Jean-Michel Basquiat Archive</h1>`;
 
-   
-    const heading = html`<h1 class="archive-heading">Jean-Michel Basquiat Archive</h1>`;
+  // BIO SECTION
+  const bioSection = html`
+    <section class="bio-section">
+      <img
+        src="https://photos.airmail.news/epi9oocf8v0p1y4ge8t2o25oylky-b8c0b52c72359b82160ec2844ad33719.jpg"
+        alt="Jean-Michel Basquiat portrait"
+      />
+      <div class="bio-text">
+        <h2>Jean-Michel Basquiat (1960–1988)</h2>
+        <p>
+          Jean-Michel Basquiat was an American artist best known for his raw, expressive paintings that combined text, imagery, and social commentary. Born in Brooklyn, New York, to a Haitian father and Puerto Rican mother, his heritage profoundly influenced his work.
+        </p>
+        <p>
+          Basquiat first gained attention in the late 1970s through graffiti under the name <strong>SAMO©</strong>. By the early 1980s, he rose to international fame with a unique fusion of neo-expressionism, symbolism, and cultural critique—often exploring themes of race, identity, and power.
+        </p>
+        <p>
+          He collaborated with Andy Warhol and became a defining figure of the New York art scene. Despite his success, Basquiat struggled with fame and addiction. He died of a heroin overdose on August 12, 1988, at just 27 years old.
+        </p>
+        <p>
+          Today, his works are among the most celebrated and valuable pieces of contemporary art, symbolizing the intersection of street culture, high art, and the Black experience in America.
+        </p>
+      </div>
+    </section>
+  `;
 
-    // BIO SECTION
-    const bioSection = html`
-      <section class="bio-section">
-        <img
-          src="https://photos.airmail.news/epi9oocf8v0p1y4ge8t2o25oylky-b8c0b52c72359b82160ec2844ad33719.jpg"
-          alt="Jean-Michel Basquiat portrait"
-        />
-        <div class="bio-text">
-          <h2>Jean-Michel Basquiat (1960–1988)</h2>
-          <p>
-            Jean-Michel Basquiat was an American artist best known for his raw, expressive paintings that combined text, imagery, and social commentary. Born in Brooklyn, New York, to a Haitian father and Puerto Rican mother, his heritage profoundly influenced his work.
-          </p>
-          <p>
-            Basquiat first gained attention in the late 1970s through graffiti under the name <strong>SAMO©</strong>. By the early 1980s, he rose to international fame with a unique fusion of neo-expressionism, symbolism, and cultural critique—often exploring themes of race, identity, and power.
-          </p>
-          <p>
-            He collaborated with Andy Warhol and became a defining figure of the New York art scene. Despite his success, Basquiat struggled with fame and addiction. He died of a heroin overdose on August 12, 1988, at just 27 years old.
-          </p>
-          <p>
-            Today, his works are among the most celebrated and valuable pieces of contemporary art, symbolizing the intersection of street culture, high art, and the Black experience in America.
-          </p>
-        </div>
-      </section>
-    `;
-
-
-    // GALLERY GRID VIEW 
-    if (this.showGrid) {
-      return html`
-        ${heading}
-        ${bioSection}
-        <div class="content-row">
-          <div class="grid">
-            ${this.artworks && this.artworks.length
-              ? this.artworks.map(
-                  (art, i) => html`
-                    <div class="frame"> 
-                     
-                    <!-- IMAGES AND TITLES IN THE GRID VIEW -->
-                      <img 
-                        src="${art.image || ""}"
-                        alt="${art.title || "Untitled"}"
-                        loading="lazy"
-                      />
-                     
-                      <!-- THE VIEW INFO BUTTON IN THE GRID -->
-                      <h4>${art.title || "Untitled"}</h4>
-                      <button class="view-details-button" @click=${() => this._openDetails(i)}>
-                        view details
-                      </button>                 
-                    </div>
-                  `)
-              : html`<div>Loading artworks…</div>`}
+  // LIKED ARTWORKS SECTION
+  const likedArtworks = html`
+    ${this.artworks.some(a => a.liked)
+      ? html`
+          <h2 class="liked-heading">Your Favorites</h2>
+          <div class="grid liked-grid">
+            ${this.artworks
+              .map((art, i) => ({ art, i }))
+              .filter(a => a.art.liked)
+              .map(
+                ({ art, i }) => html`
+                  <div class="frame">
+                    <img src="${art.image}" alt="${art.title}" loading="lazy" />
+                    <button class="view-details-button" @click=${() => this._openDetails(i)}>
+                      view details
+                    </button>
+                  </div>
+                `
+              )}
           </div>
-        </div>
-          <!-- BOTTOM IMAGE -->
-    <img
-      src="https://atticcapital.com/wp-content/uploads/2022/02/basquiat-crown.png"
-      alt="Basquiat Crown"
-      class="bottom-crown"
-    />
-      `;}
+        `
+      : null}
+  `;
 
-
-    //  DETAIL VIEW AFTER CLICKING MORE BUTTON 
+  // GALLERY GRID VIEW 
+  if (this.showGrid) {
     return html`
       ${heading}
+      ${bioSection}
+      ${likedArtworks} <!-- inserted here -->
       <div class="content-row">
-        <div class="image-container">
-          <img id="image" src=${this.imageSrc} alt=${this.title} />
+        <div class="grid">
+          ${this.artworks && this.artworks.length
+            ? this.artworks.map(
+                (art, i) => html`
+                  <div class="frame">
+                    <img 
+                      src="${art.image || ""}"
+                      alt="${art.title || "Untitled"}"
+                      loading="lazy"
+                    />
+                    <h4>${art.title || "Untitled"}</h4>
+                    <button class="view-details-button" @click=${() => this._openDetails(i)}>
+                      view details
+                    </button>
+                  </div>
+                `
+              )
+            : html`<div>Loading artworks…</div>`}
         </div>
+      </div>
+      <img
+        src="https://atticcapital.com/wp-content/uploads/2022/02/basquiat-crown.png"
+        alt="Basquiat Crown"
+        class="bottom-crown"
+      />
+    `;
+  }
 
-        <div class="text-section">
-          <div class="button-row">
+  // DETAIL VIEW AFTER CLICKING MORE BUTTON 
+  return html`
+    ${heading}
+    <div class="content-row">
+      <div class="image-container">
+        <img id="image" src=${this.imageSrc} alt=${this.title} />
+      </div>
 
-           <!-- BACK TO GALLERY -->
-            <button class="back-to-gallery" @click=${this._backToGrid} aria-label="Back to gallery">
-  <svg class="icon-grid" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
-    <!-- 3x3 grid of squares -->
-    <rect x="1" y="1" width="6" height="6" rx="1" fill="currentColor"></rect>
-    <rect x="9" y="1" width="6" height="6" rx="1" fill="currentColor"></rect>
-    <rect x="17" y="1" width="6" height="6" rx="1" fill="currentColor"></rect>
+      <div class="text-section">
+        <div class="button-row">
 
-    <rect x="1" y="9" width="6" height="6" rx="1" fill="currentColor"></rect>
-    <rect x="9" y="9" width="6" height="6" rx="1" fill="currentColor"></rect>
-    <rect x="17" y="9" width="6" height="6" rx="1" fill="currentColor"></rect>
+         <!-- BACK TO GALLERY -->
+          <button class="back-to-gallery" @click=${this._backToGrid} aria-label="Back to gallery">
+            <svg class="icon-grid" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+              <rect x="1" y="1" width="6" height="6" rx="1" fill="currentColor"></rect>
+              <rect x="9" y="1" width="6" height="6" rx="1" fill="currentColor"></rect>
+              <rect x="17" y="1" width="6" height="6" rx="1" fill="currentColor"></rect>
+              <rect x="1" y="9" width="6" height="6" rx="1" fill="currentColor"></rect>
+              <rect x="9" y="9" width="6" height="6" rx="1" fill="currentColor"></rect>
+              <rect x="17" y="9" width="6" height="6" rx="1" fill="currentColor"></rect>
+              <rect x="1" y="17" width="6" height="6" rx="1" fill="currentColor"></rect>
+              <rect x="9" y="17" width="6" height="6" rx="1" fill="currentColor"></rect>
+              <rect x="17" y="17" width="6" height="6" rx="1" fill="currentColor"></rect>
+            </svg>
+            <span>Back to Gallery</span>
+          </button>
 
-    <rect x="1" y="17" width="6" height="6" rx="1" fill="currentColor"></rect>
-    <rect x="9" y="17" width="6" height="6" rx="1" fill="currentColor"></rect>
-    <rect x="17" y="17" width="6" height="6" rx="1" fill="currentColor"></rect>
-  </svg>
-  <span>Back to Gallery</span>
-</button>
-
-                  
-            <!-- SHARE -->
-            <button class="share-btn" @click=${this._copyLink}>
+          <!-- SHARE -->
+          <button class="share-btn" @click=${this._copyLink}>
             Share
             <span id="copy-tooltip">Link copied!</span>
           </button>
 
-           <!-- LIKE, BACK TO GALLERY, and SHARE BUTTONS -->
-            <my-like-button
-              likeIndex="${this.imageIndex}"
-              ?liked=${currentLiked}
-              @liked=${this._handleLike}
-            ></my-like-button>
+          <!-- LIKE BUTTON -->
+          <my-like-button
+            .likeIndex=${currentIndex}
+            ?liked=${currentLiked}
+            @liked=${this._handleLike}
+          ></my-like-button>
 
+          <div class="imageIndex-container">
+            <!-- Previous Arrow -->
+            <button class="arrow-btn" @click=${this.showPreviousArtwork} aria-label="Previous">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                <path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/>
+              </svg>
+            </button>
 
-            <div class="imageIndex-container">
-  <!-- Previous Arrow -->
-  <button class="arrow-btn" @click=${this.showPreviousArtwork} aria-label="Previous">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
-      <path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/>
-    </svg>
-  </button>
+            <!-- Current Index -->
+            <span>${currentIndex + 1}</span>
 
-  <!-- Current Index -->
-  <span>${currentIndex + 1}</span>
-
-  <!-- Next Arrow -->
-  <button class="arrow-btn" @click=${this.showNextArtwork} aria-label="Next">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
-      <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/>
-    </svg>
-  </button>
-</div>
-</div>
-
-
-          
-
-       <!-- TITLE, ARTIST(YEAR) -->
-          <h3 id="title">${this.title}</h3>
-          <div id="artist-year">
-            ${this.artist ? `${this.artist}` : ""} ${this.year ? `(${this.year})` : ""}
+            <!-- Next Arrow -->
+            <button class="arrow-btn" @click=${this.showNextArtwork} aria-label="Next">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/>
+              </svg>
+            </button>
           </div>
+        </div>
+
+        <!-- TITLE, ARTIST(YEAR) -->
+        <h3 id="title">${this.title}</h3>
+        <div id="artist-year">
+          ${this.artist ? `${this.artist}` : ""} ${this.year ? `(${this.year})` : ""}
+        </div>
 
         <!-- DESCRIPTION -->
-          <div class="description-container">
-            ${this.description ? this.description : ""}
-          </div>
-
-          <!-- MEDIUM, DIMENSIONS, PRICE BOX -->
-          <div class="price-container">
-            <p><strong>Medium:</strong> ${this.medium}</p>
-            <p><strong>Dimensions:</strong> ${this.dimensions}</p>
-            <p>
-              <strong>Price:</strong>
-              ${this.price !== "Undisclosed"
-                ? this.price.startsWith("$")
-                  ? this.price
-                  : "$" + this.price
-                : "Undisclosed"}
-            </p>
-          </div>
+        <div class="description-container">
+          ${this.description ? this.description : ""}
         </div>
-        </div>
-        <!-- at the bottom of your detail view -->
-<div class="crown-wrapper">
-  <img
-    src="https://atticcapital.com/wp-content/uploads/2022/02/basquiat-crown.png"
-    alt="Basquiat Crown"
-    class="bottom-crown"
-  />
-</div>
 
-    `;
-  }
+        <!-- MEDIUM, DIMENSIONS, PRICE BOX -->
+        <div class="price-container">
+          <p><strong>Medium:</strong> ${this.medium}</p>
+          <p><strong>Dimensions:</strong> ${this.dimensions}</p>
+          <p>
+            <strong>Price:</strong>
+            ${this.price !== "Undisclosed"
+              ? this.price.startsWith("$")
+                ? this.price
+                : "$" + this.price
+              : "Undisclosed"}
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="crown-wrapper">
+      <img
+        src="https://atticcapital.com/wp-content/uploads/2022/02/basquiat-crown.png"
+        alt="Basquiat Crown"
+        class="bottom-crown"
+      />
+    </div>
+  `;
+}
+
 
   
   
