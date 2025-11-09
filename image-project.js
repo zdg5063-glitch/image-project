@@ -895,12 +895,7 @@ render() {
         </div>
       </div>
     </div>
-    <div class="crown-wrapper">
-      <img
-        src="https://atticcapital.com/wp-content/uploads/2022/02/basquiat-crown.png"
-        alt="Basquiat Crown"
-        class="bottom-crown"
-      />
+    
     </div>
   `;
 }
