@@ -663,14 +663,13 @@ static get styles() {
   padding: 0;  
   margin: 12px;   
   background-color: black;
-  height: auto; /* remove fixed height */
+  height: auto; 
 }
 
-/* Liked artworks images - fixed 100x100px squares */
 .liked-grid .frame img {
   width: 100px;
-  height: 100px;       /* fixed square */
-  object-fit: cover;   /* crop nicely */
+  height: 100px;      
+  object-fit: cover;  
   display: block;
   margin-bottom: 4px;
 }
