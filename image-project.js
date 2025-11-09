@@ -243,14 +243,15 @@ static get styles() {
       super.styles,
       css`
       /* HOST CSS */
-       :host {
+/* HOST CSS */
+:host {
   display: block;
   width: 100vw;
   height: auto;
   min-height: 100vh;
   box-sizing: border-box;
   background-color: black;
-  color: white;
+  color: var(--ddd-theme-default-slateMaxLight);
 }
 
 /*  Bio section styles  */
@@ -262,7 +263,7 @@ static get styles() {
   gap: 48px;
   padding: 72px;
   background-color: black;
-  color: white;
+  color: var(--ddd-theme-default-slateMaxLight);
   box-sizing: border-box;
 }
 
@@ -280,7 +281,7 @@ static get styles() {
   font-size: 16px;
   line-height: 1;
   font-weight: 100;
-  color: white;
+  color: var(--ddd-theme-default-slateMaxLight);
   text-align: left;
 }
 
@@ -302,7 +303,7 @@ static get styles() {
   width: 100%;
   padding: 72px;
   background-color: black;
-  color: white;
+  color: var(--ddd-theme-default-slateMaxLight);
   box-sizing: border-box;
 }
 
@@ -331,11 +332,11 @@ static get styles() {
   object-position: top right;
 }
 
-/* JEAN-MICHEL BASUIAT(YEAR) TEXT IN IMAGE VIEW */
+/* JEAN-MICHEL BASQUIAT(YEAR) TEXT IN IMAGE VIEW */
 .text-section {
   flex: 1;
   text-align: left;
-  color: white;
+  color: var(--ddd-theme-default-slateMaxLight);
   max-width: 100%;
 }
 
@@ -344,7 +345,7 @@ static get styles() {
   font-family: 'Playfair Display', serif;
   font-weight: 900;
   font-style: italic;
-  color: white;
+  color: var(--ddd-theme-default-slateMaxLight);
   font-size: 64px;
 }
 
@@ -360,7 +361,7 @@ static get styles() {
   font-size: 14px;
   letter-spacing: 2px;
   font-weight: 100;
-  color: white;
+  color: var(--ddd-theme-default-slateMaxLight);
   max-height: 500px;
   overflow-y: auto;
   text-align: left;
@@ -369,12 +370,12 @@ static get styles() {
 /* MEDIUM, DIMENSIONS, PRICE CONTAINER */
 .price-container {
   background-color: black;
-  border: 1px solid white;
+  border: 1px solid var(--ddd-theme-default-slateMaxLight);
   padding: 12px;
   border-radius: 4px;
   margin-top: 16px;
   font-size: 16px;
-  color: white;
+  color: var(--ddd-theme-default-slateMaxLight);
   max-width: 500px;
 }
 
@@ -382,12 +383,11 @@ static get styles() {
   margin: 4px 0;
 }
 
-
 /* IMAGE INDEX NUMBER */
 .imageIndex-container {
   font-size: 24px;
   font-weight: 100;
-  color: white;
+  color: var(--ddd-theme-default-slateMaxLight);
 }
 
 /* BACK TO GALLERY, SHARE, LIKE BUTTON ROW */
@@ -403,17 +403,17 @@ static get styles() {
 .share-btn {
   padding: 8px 16px;
   font-size: 16px;
-  border: 1px solid white;
+  border: 1px solid var(--ddd-theme-default-slateMaxLight);
   border-radius: 6px;
   background-color: black;
-  color: white;
+  color: var(--ddd-theme-default-slateMaxLight);
   cursor: pointer;
 }
 
 .share-btn:hover {
-  background-color: white;   
-  color: black;             
-  transform: scale(1.05);   
+  background-color: var(--ddd-theme-default-slateMaxLight);
+  color: black;
+  transform: scale(1.05);
 }
 
 /* Tooltip for copied link */
@@ -422,7 +422,7 @@ static get styles() {
   top: -32px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: white;
+  background-color: var(--ddd-theme-default-slateMaxLight);
   color: black;
   padding: 6px 12px;
   border-radius: 4px;
@@ -438,21 +438,21 @@ static get styles() {
 }
 
 /* BACK TO GALLERY */
-  .back-to-gallery {
+.back-to-gallery {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
   font-size: 16px;
-  color: white;             
+  color: var(--ddd-theme-default-slateMaxLight);
   background: transparent;
-  border: 1px solid white;
+  border: 1px solid var(--ddd-theme-default-slateMaxLight);
   border-radius: 6px;
   cursor: pointer;
 }
 
 .back-to-gallery:hover {
-  background: white;
+  background: var(--ddd-theme-default-slateMaxLight);
   color: black;
   transform: scale(1.03);
 }
@@ -462,7 +462,6 @@ static get styles() {
   height: 20px;
   display: inline-block;
   flex: 0 0 auto;
-  /* SVG uses fill="currentColor" so it automatically follows .back-to-gallery color */
 }
 
 /* ARROW BUTTONS FOR IMAGE INDEX */
@@ -470,7 +469,7 @@ static get styles() {
   font-size: 30px;
   border: none;
   background-color: transparent;
-  color: white;
+  color: var(--ddd-theme-default-slateMaxLight);
   cursor: pointer;
   transition: transform 0.2s ease;
 }
@@ -489,13 +488,13 @@ static get styles() {
   padding: 4px;
 }
 
-/* FRAME FOR EACH GRIDE SECTION */
+/* FRAME FOR EACH GRID SECTION */
 .frame {
   height: 800px;
   background-color: black;
   padding: 24px;
   text-align: center;
-  color: white;
+  color: var(--ddd-theme-default-slateMaxLight);
 }
 
 /* IMAGE FRAME WITHIN THE FRAME */
@@ -505,10 +504,10 @@ static get styles() {
   object-fit: cover;
 }
 
-/* TITLE WITHING THE GRID FRAME */
+/* TITLE WITHIN THE GRID FRAME */
 .frame h4 {
   font-family: 'Playfair Display', serif;
-  color: white;
+  color: var(--ddd-theme-default-slateMaxLight);
   margin: 12px 6px;
   font-size: 48px;
   font-weight: 100;
@@ -520,25 +519,25 @@ static get styles() {
   margin-top: 8px;
   padding: 8px 16px;
   font-size: 16px;
-  border: 1px solid white;
+  border: 1px solid var(--ddd-theme-default-slateMaxLight);
   border-radius: 6px;
   cursor: pointer;
   background-color: black;
-  color: white;
+  color: var(--ddd-theme-default-slateMaxLight);
 }
 
 /* HOVER FOR VIEW DETAILS BUTTON */
 .frame button:hover {
-  background-color: white;   
-  color: black;             
-  transform: scale(1.05);    
+  background-color: var(--ddd-theme-default-slateMaxLight);
+  color: black;
+  transform: scale(1.05);
 }
 
 /* PAGE HEADING */
 .archive-heading {
   font-family: 'Playfair Display', serif;
   background-color: black;
-  color: white;
+  color: var(--ddd-theme-default-slateMaxLight);
   text-align: center;
   font-size: 72px;
   margin: 0;
@@ -548,7 +547,6 @@ static get styles() {
 
 /*  MOBILE RESPONSIVE CHANGES  */
 @media (max-width: 900px) {
-  /* Bio section */
   .bio-section {
     flex-direction: column;
     align-items: center;
@@ -566,16 +564,15 @@ static get styles() {
     max-width: 400px;
   }
 
-  /* Detail view */
   .content-row {
-    flex-direction: column; /* stack image above text */
+    flex-direction: column;
     align-items: center;
     padding: 32px;
   }
 
   .image-container {
     max-width: 100%;
-    height: auto; /* prevent image from shrinking too much */
+    height: auto;
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -583,8 +580,8 @@ static get styles() {
   }
 
   .image-container img {
-    width: auto; 
-    height: 100%; 
+    width: auto;
+    height: 100%;
     object-fit: contain;
     object-position: center;
   }
@@ -594,13 +591,14 @@ static get styles() {
     text-align: center;
   }
 }
-  .imageIndex-container {
+
+.imageIndex-container {
   display: flex;
   align-items: center;
-  gap: 12px; /* space between arrows and number */
+  gap: 12px;
   font-size: 24px;
   font-weight: 100;
-  color: white;
+  color: var(--ddd-theme-default-slateMaxLight);
 }
 
 .arrow-btn {
@@ -612,12 +610,12 @@ static get styles() {
   justify-content: center;
   padding: 4px;
   transition: transform 0.2s ease, color 0.2s ease;
-  color: white;
+  color: var(--ddd-theme-default-slateMaxLight);
 }
 
 .arrow-btn:hover {
   transform: scale(1.2);
-  color: #ffcc00; /* optional: accent color on hover */
+  color: #ffcc00;
 }
 
 .arrow-btn svg {
@@ -625,30 +623,34 @@ static get styles() {
   width: 28px;
   height: 28px;
 }
+
 .bottom-crown {
-  display: block;       
-  margin: 0 auto;      
-  height: 250px;       
+  display: block;
+  margin: 0 auto;
+  height: 250px;
   width: 250px;
   padding-top: 333px;
-  padding-bottom: 72px
+  padding-bottom: 72px;
 }
+
 .crown-wrapper {
   display: flex;
-  justify-content: center; 
+  justify-content: center;
 }
+
 /* Liked artworks heading */
 .liked-heading {
   font-size: 24px;
   padding-left: 72px;
   margin-bottom: 8px;
+  color: var(--ddd-theme-default-slateMaxLight);
 }
 
 /* Liked artworks grid */
 .liked-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 8px 12px; /* 8px vertical, 12px horizontal */
+  gap: 8px 12px;
   margin-bottom: 16px;
   padding-left: 72px;
   padding-right: 100px;
@@ -660,16 +662,17 @@ static get styles() {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 0;  
-  margin: 12px;   
+  padding: 0;
+  margin: 12px;
   background-color: black;
-  height: auto; 
+  height: auto;
+  color: var(--ddd-theme-default-slateMaxLight);
 }
 
 .liked-grid .frame img {
   width: 100px;
-  height: 100px;      
-  object-fit: cover;  
+  height: 100px;
+  object-fit: cover;
   display: block;
   margin-bottom: 4px;
 }
@@ -683,6 +686,8 @@ static get styles() {
 .liked-grid .frame .view-details-button {
   padding: 4px 8px;
   font-size: 13px;
+  border: 1px solid var(--ddd-theme-default-slateMaxLight);
+  color: var(--ddd-theme-default-slateMaxLight);
 }
 
 /* Mobile responsiveness */
@@ -699,6 +704,7 @@ static get styles() {
     height: 80px;
   }
 }
+
 
 
 
